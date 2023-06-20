@@ -59,7 +59,7 @@ console.log(
 );
 */
 
-const testLive = false;
+const testLive = true;
 if (testLive) {
   const logger = new LiveLogger(stream, decompressor, path.resolve("test.raw"));
   //const parser = new Parser(logger, meterData);
