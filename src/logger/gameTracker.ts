@@ -11,10 +11,9 @@ import {
   playerclass,
   skillfeaturetype,
   stattype,
-  zonelevel,
 } from "../packets/generated/enums";
 import type { InitEnv } from "../packets/log/types";
-import { Breakdown, EntitySkills, EntityState, GameState, GameTrackerOptions, KillState } from "./data";
+import type { Breakdown, EntitySkills, EntityState, GameState, GameTrackerOptions } from "./data";
 import { StatusEffectTarget } from "./data";
 import type { Entity, Esther, Npc, Player, Projectile } from "./entityTracker";
 import { EntityTracker, EntityType } from "./entityTracker";
@@ -74,8 +73,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
       fightStartedOn: 0,
       localPlayer: this.#entityTracker.localPlayer.name, //this will be updated on dipatch
       currentBoss: undefined,
-      killState: KillState.FAIL,
-      zoneLevel: zonelevel[zonelevel.normal] as keyof typeof zonelevel,
       entities: new Map(),
       damageStatistics: {
         totalDamageDealt: 0,
@@ -165,8 +162,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
       localPlayer: this.#entityTracker.localPlayer.name, //We never reset localplayer outside of initenv or initpc
       currentBoss: this.getBossIfStillExist(),
       entities: new Map(),
-      killState: KillState.FAIL,
-      zoneLevel: this.#game.zoneLevel,
       damageStatistics: {
         totalDamageDealt: 0,
         topDamageDealt: 0,
@@ -428,8 +423,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
        * -> ValueG = 0/1/2 -> 0=examples, 1=self ?, 2=party ? -> only 6 are 0 or 1, other are 2 => ignore
        * -> ValueH = Incoming Phys. Damage (always positive)
        * -> ValueI = Incoming Mag. Damage (always positive)
-       * -> ValueJ = Incoming Phys. Damage on crit (always positive)
-       * -> ValueK = Incoming Mag. Damage on crit (always positive)
        *
        * statuseffecttype=="skill_damage_amplify"
        * -> ValueA = SkillId -> if != 0, only apply to the given skillId
@@ -785,19 +778,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
                 rdpsData.multDmg.sumRate += rate;
                 rdpsData.multDmg.totalRate *= 1 + rate;
               }
-              //Incoming Phys. Damage when crit
-              if (isCrit) {
-                const val3 = debuff.statuseffectvalues[9] ?? 0;
-                if (val3 !== 0) {
-                  const rate = (val3 / 10000) * stackCount;
-                  rdpsData.multDmg.values.push({
-                    casterEntity,
-                    rate,
-                  });
-                  rdpsData.multDmg.sumRate += rate;
-                  rdpsData.multDmg.totalRate *= 1 + rate;
-                }
-              }
             } else if (damageData.damageType === damagetype.magic) {
               //Mag. Defense
               const val = debuff.statuseffectvalues[3] ?? 0;
@@ -820,19 +800,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
                 });
                 rdpsData.multDmg.sumRate += rate;
                 rdpsData.multDmg.totalRate *= 1 + rate;
-              }
-              //Incoming Mag. Damage when crit
-              if (isCrit) {
-                const val3 = debuff.statuseffectvalues[10] ?? 0;
-                if (val3 !== 0) {
-                  const rate = (val3 / 10000) * stackCount;
-                  rdpsData.multDmg.values.push({
-                    casterEntity,
-                    rate,
-                  });
-                  rdpsData.multDmg.sumRate += rate;
-                  rdpsData.multDmg.totalRate *= 1 + rate;
-                }
               }
             }
           }
@@ -1193,11 +1160,11 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
             ((tripod.params[0] ?? 0) === 0 || damageData.skillEffectId === (tripod.params[0] ?? 0))
           ) {
             //TODO: understand how tripod.paramtype[2] works
-            // when absolute tripod.params[2] === 0
-            // when relative tripod.params[2] === 1 -> except for buff 200307
+            // when absolute tripod.paramtype[2] === 0
+            // when relative tripod.paramtype[2] === 1 -> except for buff 200307
 
             if (buff.id === (tripod.params[1] ?? 0)) {
-              if ((tripod.params[2] ?? 0) === paramtype.absolute) {
+              if ((tripod.paramtype[2] ?? 0) === paramtype.absolute) {
                 buff.statuseffectvalues = tripod.params.slice(3);
               } else {
                 //relative
@@ -1648,13 +1615,6 @@ export class GameTracker extends TypedEmitter<ParserEvent> {
   }
 
   //#endregion
-
-  setKillState(state: KillState) {
-    this.#game.killState = state;
-  }
-  setZoneLevel(zoneLevel: zonelevel) {
-    this.#game.zoneLevel = zonelevel[zoneLevel] as keyof typeof zonelevel;
-  }
 }
 
 export type DamageData = {

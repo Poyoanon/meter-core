@@ -42,10 +42,7 @@ meterData.processSkillBuffData(JSON.parse(readFileSync("meter-data/databases/Ski
 meterData.processSkillBuffEffectData(JSON.parse(readFileSync("meter-data/databases/SkillEffect.json", "utf-8")));
 
 function logEvent(name: string, pkt: LogEvent<any>) {
-  //console.log(name, pkt.time, pkt.parsed);
-  console.log(
-    `${name} - ${+pkt.time} - ${JSON.stringify(pkt.parsed, (_, v) => (typeof v === "bigint" ? v.toString() : v))}`
-  );
+  //console.log(`${name} - ${JSON.stringify(pkt.parsed, (_, v) => (typeof v === "bigint" ? v.toString() : v))}`);
 }
 /*
 console.log(
@@ -61,7 +58,7 @@ console.log(
   )
 );*/
 
-const testLive = false;
+const testLive = true;
 if (testLive) {
   const logger = new LiveLogger(stream, decompressor, path.resolve("../logs/test.raw"));
 
@@ -126,10 +123,11 @@ for (const server of [6010, 6020, 6030, 6040]) {
   stream.on("*", (data, opcode, compression, xor) => {
     try {
       const decomp = decompressor.decrypt(data, opcode, compression, xor);
-      console.log(`${new Date().toISOString()} ${server} <- ${opcodes[opcode] ?? opcode} | ${decomp.toString("hex")}`);
+      //console.log(`${new Date().toISOString()} ${server} <- ${opcodes[opcode] ?? opcode} | ${decomp.toString("hex")}`);
     } catch (e) {
       console.error(e);
     }
   });
 }
+
 console.log("Logging");

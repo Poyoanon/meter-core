@@ -49,8 +49,6 @@ export class StatApi {
             info: {
               name: p.name,
               stats: [],
-              elixirs: [],
-              gems: [],
             },
           });
         }
@@ -91,8 +89,6 @@ export class StatApi {
           info: {
             name: p.name,
             stats: [],
-            elixirs: [],
-            gems: [],
           },
         };
       } else {
