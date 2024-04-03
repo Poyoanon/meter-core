@@ -6,7 +6,8 @@ By default, only stagger values are turned on. You can re-enable the gauge gain 
 - Uncommenting the `[codes.PKTIdentityGaugeChangeNotify, [logId.IdentityGaugeChangeNotify]],` line.
 
 ## Usage
-Download [NodeJS](https://nodejs.org/en/download) and [Git](https://git-scm.com/downloads). To make your life easier, you should also download [Terminal](https://apps.microsoft.com/detail/9n0dx20hk701?rtc=1&hl=en-sg&gl=SG).
+Download [NodeJS](https://nodejs.org/en/download) and [Git](https://git-scm.com/downloads). To make your life easier, you should also download [Terminal](https://apps.microsoft.com/detail/9n0dx20hk701?rtc=1&hl=en-sg&gl=SG).\
+You also need [Python](https://www.python.org/downloads/) and [Visual C++](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version).
 - Open Terminal in a folder that you want to download this project in, and type\
   `git clone --recurse-submodules https://github.com/Poyoanon/meter-core`.
 - After that, navigate to the meter-core folder and type `npm install`.
