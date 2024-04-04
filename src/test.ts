@@ -60,7 +60,7 @@ console.log(
 
 const testLive = true;
 if (testLive) {
-  const logger = new LiveLogger(stream, decompressor, path.resolve("../logs/test.raw"));
+  const logger = new LiveLogger(stream, decompressor, path.resolve("test.raw"));
 
   const parser = new Parser(logger, meterData, "test_client", {
     isLive: true,
@@ -80,7 +80,7 @@ if (testLive) {
   logger.on("*", (name, pkt) => {
     logEvent(name, pkt);
   });
-  logger.readLogByChunk(path.resolve("../logs/test.raw"));
+  logger.readLogByChunk(path.resolve("test.raw"));
   logger.on("fileEnd", () => {
     console.log(count);
     //parser.encounters;

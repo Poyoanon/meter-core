@@ -136,7 +136,6 @@ export class Parser extends TypedEmitter<ParserEvent> {
             console.log(
               "###StaggerBar" +
                 " | ObjectID: " +
-                parsed.objectId +
                 " | StaggerValue: " +
                 parsed.paralyzationPoint +
                 " | MaxStaggerBar: " +
